@@ -16,14 +16,14 @@
         <a th:href="@{/editImage(imageId=${image.id})}">Edit</a>
         <!-- Show the edit error if the non owner of the image is trying to edit the image-->
         <!--Uncomment the below code to show the error if the non owner of the image is trying to edit the image-->
-        <!--<div th:if="${editError}">Only the owner of the image can edit the image</div>-->
+        <div th:if="${editError}">Only the owner of the image can edit the image</div>
         <div><br></div>
         <form th:action="@{/deleteImage(imageId=${image.id})}" th:method="delete">
             <input type="submit" value="Delete"/>
         </form>
         <!-- Show the delete error if the non owner of the image is trying to delete the image-->
         <!--Uncomment the below code to show the error if the non owner of the image is trying to delete the image-->
-        <!--<div th:if="${deleteError}">Only the owner of the image can delete the image</div>-->
+        <div th:if="${deleteError}">Only the owner of the image can delete the image</div>
     </div>
 </nav>
 
@@ -52,9 +52,9 @@
             </li>
         </ul>
 
-        <!--<h5 class="f4 mb0 underline">Comments</h5>-->
+        <h5 class="f4 mb0 underline">Comments</h5>
         <!-- A form to upload a comment to a particular image-->
-        <!--<form method="POST" enctype="multipart/form-data"
+        <form method="POST" enctype="multipart/form-data"
               th:action="'/image/'+ ${image.id} + '/' + ${image.title} + '/comments'">
             <fieldset id="sign_up" class="ba b&#45;&#45;transparent ph0 mh0">
                 <div class="mt3">
@@ -66,10 +66,10 @@
                 <input class="b ph3 pv2 input-reset ba b&#45;&#45;black bg-transparent grow pointer f6 dib" type="submit"
                        value="Submit">
             </div>
-        </form>-->
+        </form>
 
         <!-- A piece of code displaying all the comments to a particular image-->
-        <!--<div class="comments mt5">
+        <div class="comments mt5">
             <article class="ba b&#45;&#45;black-10 mv4" th:each="comment : ${comments}">
                 <h1 class="f4 bg-light-gray black-80 mv0 pv2 ph3" th:text="${comment.user.username} + ' says'">Title of
                     card</h1>
@@ -79,7 +79,7 @@
                     </p>
                 </div>
             </article>
-        </div>-->
+        </div>
 
     </main>
 </article>
