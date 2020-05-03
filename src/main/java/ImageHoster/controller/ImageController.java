@@ -1,12 +1,12 @@
 package ImageHoster.controller;
 
-import ImageHoster.model.Comment;
 import ImageHoster.model.Image;
 import ImageHoster.model.Tag;
 import ImageHoster.model.User;
 import ImageHoster.service.ImageService;
 import ImageHoster.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -46,22 +47,14 @@ public class ImageController {
     //Also now you need to add the tags of an image in the Model type object
     //Here a list of tags is added in the Model type object
     //this list is then sent to 'images/image.html' file and the tags are displayed
-    @RequestMapping("/images/{imageId}/{title}")
-    public String showImage(@PathVariable(name = "imageId") Integer imageId, @PathVariable(name = "title") String title, Model model) throws NullPointerException {
-        Image image = imageService.getImage(imageId);
-        model.addAttribute("image", image);
+    @RequestMapping("/images/{id}/{title}")
+    public String showImage(@PathVariable("title") String title, @PathVariable("id") Integer id, Model model) {
+        Image image = imageService.getImage(id);
+
         model.addAttribute("comments", image.getComments());
-        try {
-            List<Tag> tags = image.getTags();
-            if (tags.isEmpty()) {
-                tags.add(new Tag());
-            }
-            model.addAttribute("tags", tags);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            model.addAttribute("image", "");
-        }
-//        model.addAttribute("comment", new Comment());
+        model.addAttribute("image", image);
+        model.addAttribute("tags", image.getTags());
+
         return "images/image";
     }
 
@@ -104,24 +97,21 @@ public class ImageController {
     //The method first needs to convert the list of all the tags to a string containing all the tags separated by a comma and then add this string in a Model type object
     //This string is then displayed by 'edit.html' file as previous tags of an image
     @RequestMapping(value = "/editImage")
-    public String editImage(@RequestParam("imageId") Integer imageId, Model model, HttpSession session) {
+    public String editImage(@RequestParam("imageId") Integer imageId, Model model, HttpSession session, RedirectAttributes redirectAttrs) {
         Image image = imageService.getImage(imageId);
-        User loggedInUser = (User) session.getAttribute("loggeduser");
-        User imageOwner = image.getUser();
-        List<Tag> tags = image.getTags();
 
-
-        if (loggedInUser.getId() == imageOwner.getId()) {
-            model.addAttribute("image", image);
-            model.addAttribute("tags", convertTagsToString(tags));
-            return "images/edit";
-        } else {
-            model.addAttribute("editError", "Only the owner of the image can edit the image");
+        if(isImageOwner(imageId, session)) {
+            String tags = convertTagsToString(image.getTags());
             model.addAttribute("image", image);
             model.addAttribute("tags", tags);
-            model.addAttribute("comments", image.getComments());
-            return "images/image";
+            return "images/edit";
+        } else {
+            String imageTitle = imageService.getImage(imageId).getTitle();
+            String error = "Only the owner of the image can edit the image";
+            redirectAttrs.addAttribute("editError", error).addFlashAttribute("editError", error);
+            return "redirect:/images/" + imageId + '/' + imageTitle;
         }
+
 
     }
 
@@ -156,7 +146,7 @@ public class ImageController {
         updatedImage.setDate(new Date());
 
         imageService.updateImage(updatedImage);
-        return "redirect:/images/" + updatedImage.getId() + "/" + updatedImage.getTitle();
+        return "redirect:/images/" + updatedImage.getId() + '/' + updatedImage.getTitle();
     }
 
 
@@ -164,22 +154,30 @@ public class ImageController {
     //The method calls the deleteImage() method in the business logic passing the id of the image to be deleted
     //Looks for a controller method with request mapping of type '/images'
     @RequestMapping(value = "/deleteImage", method = RequestMethod.DELETE)
-    public String deleteImageSubmit(@RequestParam(name = "imageId") Integer imageId, HttpSession session, Model model) {
-        User loggedInUser = (User) session.getAttribute("loggeduser");
-        Image currentImage = imageService.getImage(imageId);
-        User imageOwner = currentImage.getUser();
+    public String deleteImageSubmit(@RequestParam(name = "imageId") Integer imageId, HttpSession session, RedirectAttributes redirectAttrs, Model model) {
 
-
-        if (loggedInUser.getId().equals(imageOwner.getId())) {
+        if( isImageOwner(imageId, session) ) {
             imageService.deleteImage(imageId);
             return "redirect:/images";
         } else {
-            model.addAttribute("tags", currentImage.getTags());
-            model.addAttribute("image", currentImage);
-            model.addAttribute("deleteError", "Only the owner of the image can delete the image");
-            model.addAttribute("comments", currentImage.getComments());
-            return "images/image";
+            String imageTitle = imageService.getImage(imageId).getTitle();
+            String error = "Only the owner of the image can delete the image";
+            redirectAttrs.addAttribute("deleteError", error).addFlashAttribute("deleteError", error);
+            return "redirect:/images/" + imageId + '/' + imageTitle;
         }
+
+
+    }
+
+    // This method checks if the current logged in user is the same as the owner of the image and returns True / False
+    private Boolean isImageOwner(Integer imageId, HttpSession session) {
+        Image currentImageData = imageService.getImage(imageId);
+        Integer currentImageOwnerId = currentImageData.getUser().getId();
+
+        User loggedInUser = (User) session.getAttribute("loggeduser");
+        Integer loggedInUserId = loggedInUser.getId();
+
+        return loggedInUserId.equals(currentImageOwnerId);
 
     }
 
