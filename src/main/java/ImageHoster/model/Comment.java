@@ -4,17 +4,17 @@ import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "comments")
 public class Comment {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private int id;
+    @Column(name="id")
+    private Integer id;
 
-    @Column(name = "text")
+    @Column(name="text")
     private String text;
 
-    @Column(name = "created_date")
+    @Column(name="created_at")
     private LocalDate createdDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -22,14 +22,14 @@ public class Comment {
     private User user;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "image_id")
+    @JoinColumn(name="image_id")
     private Image image;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
