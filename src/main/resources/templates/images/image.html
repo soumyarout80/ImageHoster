@@ -1,0 +1,92 @@
+<!Doctype html>
+
+<html xmlns:th="http://thymeleaf.org">
+<head th:replace="layout :: site-head"></head>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/tachyons.min.css}"/>
+</head>
+
+<!-- Using the logged-in fragment -->
+<nav class="dt w-100 border-box pa3">
+    <header th:replace="layout :: logged-in"></header>
+
+    <!-- You need to print the error message if the non owner of the image is trying to edit or delete the image-->
+    <div class="dtc v-mid w-75 tr">
+        <a th:href="@{/editImage(imageId=${image.id})}">Edit</a>
+        <!-- Show the edit error if the non owner of the image is trying to edit the image-->
+        <!--Uncomment the below code to show the error if the non owner of the image is trying to edit the image-->
+        <!--<div th:if="${editError}">Only the owner of the image can edit the image</div>-->
+        <div><br></div>
+        <form th:action="@{/deleteImage(imageId=${image.id})}" th:method="delete">
+            <input type="submit" value="Delete"/>
+        </form>
+        <!-- Show the delete error if the non owner of the image is trying to delete the image-->
+        <!--Uncomment the below code to show the error if the non owner of the image is trying to delete the image-->
+        <!--<div th:if="${deleteError}">Only the owner of the image can delete the image</div>-->
+    </div>
+</nav>
+
+<!-- Display all the details of a particular image-->
+<body>
+<div class="fl w-25-l">
+    &nbsp;
+</div>
+<article class="fl w-50-l w-100 pa3 pa5-ns center">
+    <h1>Welcome User. This is the image</h1>
+    <main id="image">
+        <h2 th:text="${image.title}">Title of image</h2>
+        <div><span th:text="${image.description}"></span></div>
+        <br>
+        <div><i>Posted On: </i> <span th:text="${image.date}"></span></div>
+
+        <div>
+            <img th:src="'data:image/jpeg;base64,'+${image.imageFile}"/>
+        </div>
+
+
+        <ul class="list mt0 mb5 pl0">
+            <li th:each="tag : ${tags}" class="dib">
+            <span class="f6 link dim ba ph3 pv2 mb2 dib black mr2" th:text="${tag.name}">Tag
+                name</span>
+            </li>
+        </ul>
+
+        <!--<h5 class="f4 mb0 underline">Comments</h5>-->
+        <!-- A form to upload a comment to a particular image-->
+        <!--<form method="POST" enctype="multipart/form-data"
+              th:action="'/image/'+ ${image.id} + '/' + ${image.title} + '/comments'">
+            <fieldset id="sign_up" class="ba b&#45;&#45;transparent ph0 mh0">
+                <div class="mt3">
+                    <label class="db fw6 lh-copy f6" for="comment">Write a comment</label>
+                    <textarea class="pa2 input-reset ba w-100" rows="5" name="comment" id="comment"></textarea>
+                </div>
+            </fieldset>
+            <div>
+                <input class="b ph3 pv2 input-reset ba b&#45;&#45;black bg-transparent grow pointer f6 dib" type="submit"
+                       value="Submit">
+            </div>
+        </form>-->
+
+        <!-- A piece of code displaying all the comments to a particular image-->
+        <!--<div class="comments mt5">
+            <article class="ba b&#45;&#45;black-10 mv4" th:each="comment : ${comments}">
+                <h1 class="f4 bg-light-gray black-80 mv0 pv2 ph3" th:text="${comment.user.username} + ' says'">Title of
+                    card</h1>
+                <div class="pa3 bt b&#45;&#45;black-10">
+                    <p class="f6 f5-ns lh-copy measure" th:text="${comment.text}">
+                        text
+                    </p>
+                </div>
+            </article>
+        </div>-->
+
+    </main>
+</article>
+<div class="fl w-25-l">
+    &nbsp;
+</div>
+</body>
+</html>
+
+

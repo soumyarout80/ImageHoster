@@ -1,0 +1,21 @@
+<!Doctype html>
+
+<html xmlns:th="http://thymeleaf.org">
+
+<head th:replace="layout :: site-head">
+</head>
+
+<header th:replace="layout :: logged-out"></header>
+
+<h2>Please Login:</h2>
+
+<!-- Get username and password to log in the application-->
+<form th:action="@{/users/login}" th:method="POST" th:object="${User}">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username"/>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password"/>
+    <input type="submit" value="Login"/>
+</form>
+
+</html>

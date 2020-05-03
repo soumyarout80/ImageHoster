@@ -1,0 +1,41 @@
+<html xmlns:th="http://thymeleaf.org">
+
+<head th:replace="layout :: site-head">
+</head>
+
+<header th:replace="layout :: logged-in"></header>
+
+<h1>Edit Image</h1>
+
+<form th:method="put" th:action="@{/editImage(imageId=${image.id})}" enctype="multipart/form-data">
+
+    <div>Image Title :</div>
+    <div>
+        <input type="text" name="title" size="70" th:value="${image.title}"/>
+    </div>
+
+    <br>
+    <div> Description :</div>
+    <div>
+        <textarea rows="7" cols="100" name="description" th:text="${image.description}"></textarea>
+    </div>
+
+    <br>
+    <div>
+        <label for="file">Edit File</label>
+        <input type="file" name="file" id="file"/>
+    </div>
+
+    <!-- The code provides an option to edit the tags of an image and also displays the previous assigned tags to an image-->
+    <br>
+    <div>
+        <label for="tags">Edit Tags</label>
+        <textarea type="text" name="tags" id="tags" th:text="${tags}"></textarea>
+        <p>Multiple tags are allowed. Please separate tags by "," such as labrador,dog,yellow </p>
+    </div>
+
+    <br>
+    <input type="submit" value="Submit"/>
+</form>
+
+</html>

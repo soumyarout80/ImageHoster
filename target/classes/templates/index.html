@@ -1,0 +1,29 @@
+<!Doctype html>
+
+<html xmlns:th="http://thymeleaf.org">
+
+<!-- Adding the fragment site-head in layout.html-->
+<head th:replace="layout :: site-head">
+</head>
+
+<!-- Adding the fragment logged-out in layout.html-->
+<header th:replace="layout :: logged-out"></header>
+
+<body>
+<h1>Image Hoster</h1>
+<main id="images">
+    <post th:each="i : ${images}">
+        <p>
+        <div>
+            <img th:src="'data:image/jpeg;base64,'+${i.imageFile}"/>
+        </div>
+        <h2 th:text="${i.title}"></h2>
+        <i>Posted On: </i> <span th:text="${i.date}"></span>
+        <br>
+        <br>
+        <hr>
+        </p>
+    </post>
+</main>
+</body>
+</html>
