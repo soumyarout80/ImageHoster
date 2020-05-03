@@ -2,19 +2,19 @@
 
 **This is Imgae hoster application where you can upload pics with tag and description.**
 
-###Configuration
+### Configuration
 
 **If you wnt to change the port number you can edit  application.properties file as below**
 
 ``server.port = 8888
 ``
 
-###gitignore
+### gitignore
 
 **Added a .gitignore file for java project which will help accidental checkin**
 Go to gitignore file [.gitignore](https://github.com/soumyarout80/ImageHoster/blob/master/.gitignore)
 
-###DB Configuration
+### DB Configuration
 
 **After cloning the repository you need to configure the below things:**
 
@@ -26,12 +26,12 @@ Go to gitignore file [.gitignore](https://github.com/soumyarout80/ImageHoster/bl
 
 ``DB password: soumya``
 
-###Run the application
+### Run the application
 
 **clone the git repo**
 ``git clone https://github.com/soumyarout80/ImageHoster.git``
 
-#Features
+# Features
 - Image upload
 - User registration
 - User login
