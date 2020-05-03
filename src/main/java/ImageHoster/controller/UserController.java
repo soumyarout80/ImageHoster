@@ -1,4 +1,3 @@
-
 package ImageHoster.controller;
 
 import ImageHoster.model.Image;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -43,36 +43,22 @@ public class UserController {
     //This controller method is called when the request pattern is of type 'users/registration' and also the incoming request is of POST type
     //This method calls the business logic and after the user record is persisted in the database, directs to login page
     @RequestMapping(value = "users/registration", method = RequestMethod.POST)
-    public String registerUser(User user, Model model) {
-
-        String enteredPassword = user.getPassword();
-
-        Boolean validationResult = passwordValidation(enteredPassword);
-        if (validationResult) {
+    public String registerUser(User user, RedirectAttributes redirectAttrs) {
+        if(isPasswordStrong(user.getPassword())) {
             userService.registerUser(user);
             return "users/login";
         } else {
-            user = new User();
-            UserProfile profile = new UserProfile();
-            user.setProfile(profile);
-            model.addAttribute("User", user);
             String error = "Password must contain atleast 1 alphabet, 1 number & 1 special character";
-            model.addAttribute("passwordTypeError", error);
-            return "users/registration";
+            redirectAttrs.addAttribute("passwordTypeError", error).addFlashAttribute("passwordTypeError", error);
+            return "redirect:/users/registration";
         }
     }
 
-    /**
-     * Method to do password validation
-     *
-     * @param enteredPassword
-     * @return Boolean
-     */
-    private Boolean passwordValidation(String enteredPassword) {
-        String passwordPattern = "((?=.*\\d)(?=.*[a-zA-Z])(?=.*[^a-zA-Z\\d]).{3,})";
-        Pattern pattern = Pattern.compile(passwordPattern);
-        Matcher matcher = pattern.matcher(enteredPassword);
-        return matcher.matches();
+    private Boolean isPasswordStrong(String userPassword) {
+        Pattern p = Pattern.compile("(?=.*[a-z])(?=.*[0-9])(?=.*[^a-z0-9])", Pattern.CASE_INSENSITIVE);
+        Matcher m = p.matcher(userPassword);
+
+        return m.find();
     }
 
     //This controller method is called when the request pattern is of type 'users/login'
